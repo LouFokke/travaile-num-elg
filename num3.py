@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import sys
 import numpy as np
+import array_to_latex as a2l
 #np.set_printoptions(threshold=sys.maxsize)
 
 #matrice P
@@ -46,6 +47,8 @@ matrice_p = [
     #1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 21 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37
              ]
 
+#a2l.to_ltx(np.array(matrice_p), frmt = '{:6.2f}', arraytype = 'array')
+print(matrice_p)
 
 #potentiel électique aux noeuds absobrants
 pot_for_point = [[-300, -300, -300, -300, -300, -300, -300, -300, 0, 0, 0, 0, 0, 0, 0, -300, -300, -300, -300, -300, -300, -300]]
