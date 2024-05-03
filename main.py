@@ -58,8 +58,8 @@ poten = calcul(poten, 10000)
 
 
 plt.figure(figsize=(15, 6))
-plt.contourf(poten, cmap='plasma', levels=50)
-plt.colorbar(label='Potentiel [V]')
+plt.contourf(poten, cmap='plasma', levels=50, vmin = -300, vmax=0)
+plt.colorbar(label='Potentiel [V]', ticks = np.linspace(-300,0,7))
 plt.title('Potentiel Électrique [r-z]')
 plt.xlabel('Z [mm]')
 plt.ylabel('R [mm]')
