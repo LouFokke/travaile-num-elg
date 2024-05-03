@@ -2,66 +2,58 @@ from numpy import pi, cos, sin, cosh, sinh
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-#Grid, pas h = 0.1 mm, plan r(-3 mm à 3mm) et z(0 mm à 12 mm)
-h = 0.1
-r = np.linspace(-3, 3, int(6 / h)) 
-z = np.linspace(0, 12, int(12 / h))
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 
 
-R,Z = np.meshgrid(r,z) 
+poten = np.full((61, 121), -100)
+poten[0,30:] = -300 #90 car 9/h donne un indice de 90 
+poten[-1, 30:] = -300
+poten[:,-1] = 0
+poten[30,45:] = 0 
+np.fill_diagonal(poten[30:,:], -300)
+np.fill_diagonal(np.flipud(poten[:31,:]), -300)
 
-z_9 = int(9 / h)
-z_7_5 = int(7.5/h) 
-
-#Intiialiser la grid à 0 partout
-#grid = np.zeros_like(Z)
-grid = np.full_like(Z, 30)
-
-
-
-#Mettre des conditions frontieres faciles
-grid[:z_9,0] = -300
-grid[:z_9,-1] = -300
-grid[0,:] = 0
-grid[0:z_7_5,r == 0] = 0
+for i in range(61):
+    for j in range(121):
+        if poten[i,j] == -300:
+            break
+        else:
+            poten[i,j] = 100      # Ici les points avec 50 on veux les eliminer apres
 
 
-# Cf Triangle 
-np.fill_diagonal(grid[z_9:,:], -300)
-np.fill_diagonal(np.fliplr(grid[z_9:,:]), -300)
 
 
-def calculer(potentiel, n_iter):
-    for _ in range(n_iter):
-        S = 0
-        for j in range(121): #Pour avoir nos 120 lignes de notre grid , soit z
-            for i in range(61): #Pour avoir nos 60 colonnes, soit r
-                if potentiel[j,i] != 0 and potentiel[j,i] != -300: #Si le pt est ailleurs que les conditions frontieres
-                    if i == 30: # Point ou R = 0
-                        potentiel[j,i] = 1/2*(potentiel[j+1,i]+potentiel[j-1,i])
+
+def calcul(pot, n_iter):
+    for n in range(n_iter):
+        pot_last = pot.copy()
+        for x in range(121):
+            for y in range(61):
+                if pot[y, x] != 0 and pot[y, x] != 100 and pot[y,x] != -300: #Le potentiel seulement en dedans du detecteur
+                    if y == 30:
+                        pot[y,x] = 0.5*(pot[y,x + 1]+pot[y, x -1])
                     else:
-                        potentiel[i,j]= (potentiel[j,i+1] + potentiel[j,i-1] + potentiel[j+1,i]+ potentiel[j-1,i])/4 + (
-                            potentiel[j,i +1] + potentiel[j, i-1])/(8*(30-i))
-                        
-    return potentiel
-
-potentiel = calculer(grid, n_iter=10000)
+                        pot[y,x] = 0.25*(pot[y,x + 1]+pot[y, x -1] + pot[y +1,x]+pot[y-1, x]) #+ (pot[y + 1,x]+pot[y-1, x]/(8 * y))  Faut tu mettre le h lors de la somme?
+    return pot                                                                                # Deuxieme terme ne fonctionne pas
 
 
-plt.contourf(R, Z, potentiel, cmap='coolwarm')
-plt.xlabel('r (mm)')
-plt.ylabel('z (mm)')
-plt.colorbar(label='Potential (V)')
-plt.title('Electric Potential Distribution')
+
+poten = calcul(poten, 1000)
+
+# Plotting the result
+
+# Masking the array to not display points equal to 50
+masked_poten = np.ma.masked_where(poten == 100, poten)
+
+# Plotting the result using contourf
+plt.figure(figsize=(10, 6))
+plt.contourf(masked_poten, cmap='plasma', levels = 70)
+plt.colorbar(label='Potential')
+plt.title('Electric Potential')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.grid(True)
 plt.show()
 
-
-'''plt.figure(figsize=(8, 6))
-plt.imshow(grid, extent=[r[0], r[-1], z[0], z[-1]], cmap='plasma', aspect='auto', origin='lower')
-plt.colorbar(label='Voltage (V)')
-plt.title('Voltage Distribution on the Grid')
-plt.xlabel('r (mm)')
-plt.ylabel('z (mm)')
-plt.grid(True)
-plt.show()'''
