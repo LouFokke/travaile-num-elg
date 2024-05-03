@@ -35,7 +35,7 @@ def calcul(pot, n_iter):
                     if y == 30:
                         pot[y,x] = 0.5*(pot[y,x + 1]+pot[y, x -1])
                     else:
-                        pot[y,x] = 0.25*(pot[y,x + 1]+pot[y, x -1] + pot[y +1,x]+pot[y-1, x]) #+ (pot[y + 1,x]+pot[y-1, x]/(8 * y))  Faut tu mettre le h lors de la somme?
+                        pot[y,x] = 0.25*(pot[y,x + 1]+pot[y, x -1] + pot[y +1,x]+pot[y-1, x]) + 0.1 * (pot[y + 1,x] + pot[y-1, x]) / (8 * y)  #Faut tu mettre le h lors de la somme?
     return pot                                                                                # Deuxieme terme ne fonctionne pas
 
 
