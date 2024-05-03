@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import time
 
+start_time = time.time()
 #Initialization du grid et des conditions frontieres, indices de lignes de 0 à 60 et de 0 à 121 pour les colonnes
 poten = np.full((61, 121), -170, dtype=float)
 poten[0,30:] = -300 
@@ -21,13 +23,13 @@ for i in range(61):
             poten[i,j] = np.nan     
 
 
-#Vizualisation des Conditions Frontieres 
+"""
+#Vizualisation des condition frontieres
 plt.imshow(poten, cmap='plasma')
 plt.colorbar()
 plt.show()
 
-
-
+"""
 
 
 def calcul(pot, n_iter):
@@ -56,6 +58,8 @@ def calcul(pot, n_iter):
 
 poten = calcul(poten, 10000)
 
+print("Process finished --- %s seconds ---" % (time.time()-start_time))
+
 
 plt.figure(figsize=(15, 6))
 plt.contourf(poten, cmap='plasma', levels=50, vmin = -300, vmax=0)
@@ -63,6 +67,6 @@ plt.colorbar(label='Potentiel [V]', ticks = np.linspace(-300,0,7))
 plt.title('Potentiel Électrique [r-z]')
 plt.xlabel('Z [mm]')
 plt.ylabel('R [mm]')
-plt.xticks(np.arange(0, 121, 10), np.arange(0, 13, 1))  # Adjust x tick labels
+plt.xticks(np.arange(0, 121, 10), np.arange(0, 13, 1)) 
 plt.yticks(np.arange(0, 61, 10), np.arange(-3, 4, 1)) 
 plt.show()
